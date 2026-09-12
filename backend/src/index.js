@@ -1,11 +1,15 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 import { generateMathematicalPrediction } from './jyotish/mathEngine.js';
 import { refinePredictionWithAI } from './services/geminiService.js';
 import { initDatabase, savePrediction, getRecentPredictions } from './services/dbService.js';
 
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.resolve(__dirname, '..', '..', '.env') });
 
 const app = express();
 const PORT = process.env.PORT || 5000;

@@ -47,8 +47,13 @@ function normalizeDegree(deg) {
  * Calculates planetary positions using astronomy-engine
  */
 export function calculatePlanetaryPositions(dob, tob, lat = 28.6139, lng = 77.2090) {
-  const dateTimeStr = `${dob}T${tob}:00.000Z`;
-  const dateObj = new Date(dateTimeStr);
+  const normalizedTob = (tob || '00:00:00').trim();
+  const timeParts = normalizedTob.split(':').map((part) => Number.parseInt(part, 10) || 0);
+  const hours = String(timeParts[0] ?? 0).padStart(2, '0');
+  const minutes = String(timeParts[1] ?? 0).padStart(2, '0');
+  const seconds = String(timeParts[2] ?? 0).padStart(2, '0');
+  const validTime = `${hours}:${minutes}:${seconds}`;
+  const dateObj = new Date(`${dob}T${validTime}Z`);
   const time = Astronomy.MakeTime(dateObj);
   const ayanamsa = getLahiriAyanamsa(time.ut);
 
