@@ -123,10 +123,10 @@
         </div>
 
         <!-- Section: See Your Future (Timeframe) -->
-        <div class="mt-4 pt-3">
-          <label class="form-label form-label-cosmic d-block mb-3">
+        <fieldset class="mt-4 pt-3">
+          <legend class="form-label form-label-cosmic d-block mb-3">
             <i class="bi bi-hourglass-split me-1 text-warning"></i> See Your Future (Timeframe)
-          </label>
+          </legend>
           <div class="row g-3">
             {#each timeframes as tf}
               <div class="col-md-4">
@@ -143,13 +143,13 @@
               </div>
             {/each}
           </div>
-        </div>
+        </fieldset>
 
         <!-- Section: See For (Category) -->
-        <div class="mt-4 pt-3">
-          <label class="form-label form-label-cosmic d-block mb-3">
+        <fieldset class="mt-4 pt-3">
+          <legend class="form-label form-label-cosmic d-block mb-3">
             <i class="bi bi-stars me-1 text-warning"></i> See For (Focus Area)
-          </label>
+          </legend>
           <div class="row g-2 g-md-3">
             {#each categories as cat}
               <div class="col-6 col-md-3">
@@ -166,7 +166,7 @@
               </div>
             {/each}
           </div>
-        </div>
+        </fieldset>
 
         <!-- Action Button -->
         <div class="text-center mt-5">

@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jyotish-backend
+  namespace: jyotish
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: jyotish-backend
+  template:
+    metadata:
+      labels:
+        app: jyotish-backend
+    spec:
+      containers:
+        - name: backend
+          image: siddharthzend/jyotish-backend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+          env:
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: jyotish-config
+                  key: NODE_ENV
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: jyotish-config
+                  key: PORT
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: jyotish-config
+                  key: DB_HOST
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: jyotish-config
+                  key: DB_PORT
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: jyotish-config
+                  key: DB_NAME
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: jyotish-config
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: jyotish-secrets
+                  key: MYSQL_PASSWORD
+            - name: GEMINI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jyotish-secrets
+                  key: GEMINI_API_KEY
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jyotish-backend
+  namespace: jyotish
+spec:
+  selector:
+    app: jyotish-backend
+  ports:
+    - port: 5000
+      targetPort: 5000
+      protocol: TCP
