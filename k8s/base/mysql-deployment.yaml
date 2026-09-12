@@ -29,16 +29,6 @@ spec:
                 secretKeyRef:
                   name: jyotish-secrets
                   key: MYSQL_DATABASE
-            - name: MYSQL_USER
-              valueFrom:
-                secretKeyRef:
-                  name: jyotish-secrets
-                  key: MYSQL_USER
-            - name: MYSQL_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: jyotish-secrets
-                  key: MYSQL_PASSWORD
           volumeMounts:
             - name: mysql-storage
               mountPath: /var/lib/mysql
