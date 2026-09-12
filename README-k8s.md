@@ -1,6 +1,7 @@
 # Kubernetes Deployment Notes
 
-This repository now includes a basic Kubernetes structure for AWS deployment.
+This repository now includes a Kubernetes structure for AWS deployment on a single
+EC2 instance running k3s.
 
 ## Structure
 
@@ -28,18 +29,18 @@ kubectl apply -k k8s/overlays/prod
 
 ## AWS Ingress
 
-The base manifest uses the AWS Load Balancer Controller and creates an internet-facing
-Application Load Balancer. `/api` routes to the backend and `/` routes to the frontend.
+The base manifest uses the Traefik Ingress Controller bundled with k3s. `/api` routes
+to the backend and `/` routes to the frontend. The EC2 security group must allow TCP
+ports 80 and 443 from the intended clients.
 
-Before applying it on EKS, install and configure the AWS Load Balancer Controller,
-then run:
+Apply it on the EC2 k3s node with:
 
 kubectl apply -k k8s/overlays/dev
 kubectl get ingress -n jyotish
 
-The ALB hostname will appear in the `ADDRESS` column. A DNS record should point your
-domain to that hostname. HTTPS requires an ACM certificate and an additional HTTPS
-listener annotation before production use.
+The public address is the EC2 public IP or DNS name. A DNS A record should point your
+domain to that address. HTTPS can be added with a DNS challenge and a cert-manager
+ClusterIssuer after HTTP is working.
 
 ## Notes
 
