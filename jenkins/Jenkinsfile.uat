@@ -1,0 +1,58 @@
+pipeline {
+    agent any
+
+    environment {
+        ENV = 'uat'
+        PORT = '3002'
+        DOCKER_COMPOSE_FILE = 'docker-compose.uat.yml'
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                echo "Fetching latest code from uat branch..."
+                git branch: 'uat', url: 'https://github.com/siddharthzend/jyotish-astro-app.git'
+            }
+        }
+
+        stage('Backend & Integration Tests') {
+            steps {
+                dir('backend') {
+                    echo "Running backend integration tests for UAT..."
+                    sh 'npm install'
+                    sh 'npm test'
+                }
+            }
+        }
+
+        stage('Build Docker Images') {
+            steps {
+                echo "Building Docker images for UAT environment..."
+                sh "docker compose -f ${DOCKER_COMPOSE_FILE} build"
+            }
+        }
+
+        stage('Deploy UAT Environment') {
+            steps {
+                echo "Deploying containers to port ${PORT}..."
+                sh "docker compose -f ${DOCKER_COMPOSE_FILE} up -d"
+            }
+        }
+
+        stage('Health Check') {
+            steps {
+                echo "Verifying UAT API Health..."
+                sh 'curl -f http://localhost:5002/api/health || exit 1'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ UAT Environment pipeline deployed successfully!"
+        }
+        failure {
+            echo "❌ UAT Pipeline failed! Check logs."
+        }
+    }
+}

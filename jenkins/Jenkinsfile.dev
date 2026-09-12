@@ -1,0 +1,58 @@
+pipeline {
+    agent any
+
+    environment {
+        ENV = 'dev'
+        PORT = '3001'
+        DOCKER_COMPOSE_FILE = 'docker-compose.dev.yml'
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                echo "Fetching latest code from dev branch..."
+                git branch: 'dev', url: 'https://github.com/siddharthzend/jyotish-astro-app.git'
+            }
+        }
+
+        stage('Backend Unit & Logic Tests') {
+            steps {
+                dir('backend') {
+                    echo "Running backend mathematical logic tests..."
+                    sh 'npm install'
+                    sh 'npm test'
+                }
+            }
+        }
+
+        stage('Build Docker Images') {
+            steps {
+                echo "Building Docker images for DEV environment..."
+                sh "docker compose -f ${DOCKER_COMPOSE_FILE} build"
+            }
+        }
+
+        stage('Deploy DEV Environment') {
+            steps {
+                echo "Deploying containers to port ${PORT}..."
+                sh "docker compose -f ${DOCKER_COMPOSE_FILE} up -d"
+            }
+        }
+
+        stage('Health Check') {
+            steps {
+                echo "Verifying DEV API Health..."
+                sh 'curl -f http://localhost:5001/api/health || exit 1'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ DEV Environment pipeline deployed successfully!"
+        }
+        failure {
+            echo "❌ DEV Pipeline failed! Check logs."
+        }
+    }
+}

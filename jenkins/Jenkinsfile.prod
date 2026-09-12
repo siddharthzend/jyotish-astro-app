@@ -1,0 +1,54 @@
+pipeline {
+    agent any
+
+    environment {
+        ENV = 'prod'
+        PORT = '80'
+        DOCKER_COMPOSE_FILE = 'docker-compose.prod.yml'
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                echo "Fetching latest code from main branch..."
+                git branch: 'main', url: 'https://github.com/siddharthzend/jyotish-astro-app.git'
+            }
+        }
+
+        stage('Approval for Production') {
+            steps {
+                input message: 'Deploy to Production Environment?', ok: 'Deploy'
+            }
+        }
+
+        stage('Build Production Images') {
+            steps {
+                echo "Building Docker images for PROD environment..."
+                sh "docker compose -f ${DOCKER_COMPOSE_FILE} build"
+            }
+        }
+
+        stage('Deploy Production') {
+            steps {
+                echo "Deploying Production containers to port ${PORT}..."
+                sh "docker compose -f ${DOCKER_COMPOSE_FILE} up -d"
+            }
+        }
+
+        stage('Health Check') {
+            steps {
+                echo "Verifying Production API Health..."
+                sh 'curl -f http://localhost:5000/api/health || exit 1'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "🚀 PROD Environment pipeline deployed successfully!"
+        }
+        failure {
+            echo "❌ PROD Pipeline failed! Rollback needed."
+        }
+    }
+}
