@@ -3,6 +3,13 @@ kind: Kustomization
 resources:
   - ../../base
 namePrefix: dev-
+images:
+  - name: siddharthzend/jyotish-backend
+    newName: siddharthzend/jyotish-backend
+    newTag: develop
+  - name: siddharthzend/jyotish-frontend
+    newName: siddharthzend/jyotish-frontend
+    newTag: develop
 patches:
   - path: env-patch.yaml
   - path: secret-patch.yaml
