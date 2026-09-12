@@ -6,33 +6,5 @@ metadata:
 data:
   NODE_ENV: "dev"
   PORT: "5000"
+  DB_HOST: "dev-jyotish-mysql"
   DB_NAME: "jyotish_dev_db"
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: jyotish-backend
-  namespace: jyotish
-spec:
-  template:
-    spec:
-      containers:
-        - name: backend
-          env:
-            - name: DB_NAME
-              value: jyotish_dev_db
-            - name: DB_USER
-              value: root
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: jyotish-frontend
-  namespace: jyotish
-spec:
-  template:
-    spec:
-      containers:
-        - name: frontend
-          ports:
-            - containerPort: 80

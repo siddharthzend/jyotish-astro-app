@@ -14,6 +14,7 @@ k8s/
 │   ├── mysql-deployment.yaml
 │   ├── backend-deployment.yaml
 │   ├── frontend-deployment.yaml
+│   ├── ingress.yaml
 ├── overlays/
 │   ├── dev/
 │   ├── uat/
@@ -24,6 +25,21 @@ k8s/
 kubectl apply -k k8s/overlays/dev
 kubectl apply -k k8s/overlays/uat
 kubectl apply -k k8s/overlays/prod
+
+## AWS Ingress
+
+The base manifest uses the AWS Load Balancer Controller and creates an internet-facing
+Application Load Balancer. `/api` routes to the backend and `/` routes to the frontend.
+
+Before applying it on EKS, install and configure the AWS Load Balancer Controller,
+then run:
+
+kubectl apply -k k8s/overlays/dev
+kubectl get ingress -n jyotish
+
+The ALB hostname will appear in the `ADDRESS` column. A DNS record should point your
+domain to that hostname. HTTPS requires an ACM certificate and an additional HTTPS
+listener annotation before production use.
 
 ## Notes
 
